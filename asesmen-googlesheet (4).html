@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Asesmen Sumatif Matematika Kelas XI - SMKN 1 Cibatu Purwakarta</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root{--primary:#0f4c81;--primary-dark:#0a3a63;--secondary:#2d9cdb;--accent:#f2994a;--success:#27ae60;--warning:#e2b93b;--danger:#eb5757;--bg-dark:#0f172a;--bg-card:#1e293b;--bg-input:#334155;--text-white:#f8fafc;--text-gray:#94a3b8;--text-muted:#64748b;--border:#475569}
+        *{margin:0;padding:0;box-sizing:border-box;-webkit-user-select:none;user-select:none}
+        input,textarea{-webkit-user-select:text;user-select:text}
+        body{font-family:'Outfit',sans-serif;background:var(--bg-dark);color:var(--text-white);line-height:1.7;min-height:100vh}
+        .cheat-warning-overlay{display:none;position:fixed;inset:0;background:rgba(235,87,87,0.98);z-index:10000;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:2rem}
+        .cheat-warning-overlay.show{display:flex}
+        .cheat-warning-overlay .warning-icon{font-size:5rem;margin-bottom:1.5rem;animation:shake 0.5s infinite}
+        @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+        .cheat-warning-overlay h2{font-size:2rem;margin-bottom:1rem}
+        .cheat-warning-overlay p{font-size:1.1rem;margin-bottom:0.5rem;opacity:0.9}
+        .cheat-warning-overlay .violation-count{font-size:3rem;font-weight:800;margin:1rem 0}
+        .cheat-warning-overlay .continue-btn{background:white;color:var(--danger);border:none;padding:1rem 2.5rem;border-radius:12px;font-size:1.1rem;font-weight:700;cursor:pointer;margin-top:1.5rem}
+        .violation-banner{position:fixed;top:0;left:0;right:0;background:var(--danger);color:white;padding:0.75rem;text-align:center;font-weight:600;z-index:9999;display:none}
+        .violation-banner.show{display:block}
+        .login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1rem;position:relative;z-index:1}
+        .login-box{background:var(--bg-card);border-radius:24px;padding:2.5rem;width:100%;max-width:520px;border:1px solid var(--border);box-shadow:0 24px 64px rgba(0,0,0,0.4)}
+        .login-header{text-align:center;margin-bottom:2rem}
+        .login-logo{width:80px;height:80px;background:linear-gradient(135deg,var(--secondary),var(--primary));border-radius:20px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.9rem;margin:0 auto 1.5rem;box-shadow:0 8px 32px rgba(45,156,219,0.3)}
+        .login-header h1{font-size:1.4rem;font-weight:700;margin-bottom:0.5rem}
+        .login-header p{color:var(--text-gray);font-size:0.95rem}
+        .form-group{margin-bottom:1.25rem}
+        .form-group label{display:block;font-size:0.85rem;font-weight:600;color:var(--text-gray);margin-bottom:0.5rem;text-transform:uppercase;letter-spacing:0.05em}
+        .form-group input,.form-group select{width:100%;background:var(--bg-input);border:2px solid var(--border);border-radius:12px;padding:0.875rem 1rem;font-size:1rem;font-family:inherit;color:var(--text-white);transition:all 0.3s}
+        .form-group input:focus,.form-group select:focus{outline:none;border-color:var(--secondary);box-shadow:0 0 0 4px rgba(45,156,219,0.2)}
+        .rules-box{background:rgba(242,153,74,0.1);border:1px solid rgba(242,153,74,0.3);border-radius:12px;padding:1.25rem;margin-bottom:1.5rem}
+        .rules-box h3{color:var(--accent);font-size:0.95rem;margin-bottom:0.75rem}
+        .rules-box ul{list-style:none}
+        .rules-box li{font-size:0.85rem;color:var(--text-gray);margin-bottom:0.5rem;padding-left:1.25rem;position:relative}
+        .rules-box li::before{content:'⚠️';position:absolute;left:0;font-size:0.7rem}
+        .checkbox-group{display:flex;align-items:flex-start;gap:0.75rem;margin-bottom:1.5rem}
+        .checkbox-group input[type="checkbox"]{width:20px;height:20px;accent-color:var(--success);cursor:pointer;flex-shrink:0;margin-top:2px}
+        .checkbox-group label{font-size:0.9rem;color:var(--text-gray);cursor:pointer}
+        .start-btn{width:100%;background:linear-gradient(135deg,var(--success),#1e8449);color:white;border:none;padding:1rem;border-radius:12px;font-size:1.1rem;font-weight:700;cursor:pointer;transition:all 0.3s;box-shadow:0 8px 32px rgba(39,174,96,0.3)}
+        .start-btn:hover:not(:disabled){transform:translateY(-2px)}
+        .start-btn:disabled{background:var(--text-muted);cursor:not-allowed;box-shadow:none}
+        .exam-screen{display:none;position:relative;z-index:1}
+        .exam-screen.active{display:block}
+        .header{background:linear-gradient(135deg,var(--primary) 0%,var(--primary-dark) 100%);padding:1rem 1.5rem;position:sticky;top:0;z-index:100;border-bottom:3px solid var(--secondary)}
+        .header-content{max-width:950px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
+        .header-left{display:flex;align-items:center;gap:1rem}
+        .header-logo{width:45px;height:45px;background:linear-gradient(135deg,var(--secondary),var(--primary));border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.65rem}
+        .header-info h1{font-size:0.95rem;font-weight:700}
+        .header-info p{font-size:0.75rem;color:var(--text-gray)}
+        .header-right{display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap}
+        .timer-box{display:flex;align-items:center;gap:0.5rem;background:linear-gradient(135deg,var(--danger),#c0392b);padding:0.6rem 1rem;border-radius:10px;font-family:'JetBrains Mono',monospace;font-size:1.1rem;font-weight:700}
+        .violation-counter{display:flex;align-items:center;gap:0.5rem;background:rgba(235,87,87,0.2);border:1px solid var(--danger);padding:0.4rem 0.75rem;border-radius:8px;font-size:0.8rem}
+        .container{max-width:950px;margin:0 auto;padding:1.5rem}
+        .question-nav{background:var(--bg-card);border-radius:16px;padding:1.25rem;margin-bottom:1.5rem;border:1px solid var(--border)}
+        .question-nav h3{font-size:0.85rem;color:var(--text-gray);margin-bottom:1rem;text-transform:uppercase}
+        .nav-buttons{display:flex;flex-wrap:wrap;gap:0.5rem}
+        .nav-btn{width:38px;height:38px;background:var(--bg-input);border:2px solid var(--border);border-radius:8px;color:var(--text-white);font-weight:600;cursor:pointer;transition:all 0.2s;font-size:0.9rem}
+        .nav-btn:hover{border-color:var(--secondary)}
+        .nav-btn.active{background:var(--secondary);border-color:var(--secondary)}
+        .nav-btn.answered{background:var(--success);border-color:var(--success)}
+        .question-card{background:var(--bg-card);border-radius:20px;padding:1.75rem;margin-bottom:1.5rem;border:1px solid var(--border);display:none}
+        .question-card.active{display:block}
+        .question-header{display:flex;align-items:flex-start;gap:1rem;margin-bottom:1.5rem}
+        .q-number{width:46px;height:46px;background:linear-gradient(135deg,var(--primary),var(--primary-dark));border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1rem;flex-shrink:0}
+        .q-text{font-size:1rem;line-height:1.8;margin-bottom:0.5rem}
+        .math{font-family:'JetBrains Mono',monospace;background:var(--bg-input);padding:0.15rem 0.5rem;border-radius:6px;font-size:0.9rem;color:var(--secondary);border:1px solid var(--border)}
+        .difficulty{display:inline-block;padding:0.25rem 0.6rem;border-radius:20px;font-size:0.65rem;font-weight:700;text-transform:uppercase}
+        .diff-easy{background:rgba(39,174,96,0.2);color:#6fcf97;border:1px solid rgba(39,174,96,0.4)}
+        .diff-medium{background:rgba(226,185,59,0.2);color:#f2c94c;border:1px solid rgba(226,185,59,0.4)}
+        .diff-hard{background:rgba(235,87,87,0.2);color:#eb5757;border:1px solid rgba(235,87,87,0.4)}
+        .options{display:flex;flex-direction:column;gap:0.6rem}
+        .option{display:flex;align-items:center;gap:0.75rem;padding:0.875rem 1rem;background:var(--bg-input);border:2px solid var(--border);border-radius:10px;cursor:pointer;transition:all 0.25s}
+        .option:hover{border-color:var(--secondary);background:rgba(45,156,219,0.1)}
+        .option.selected{border-color:var(--success);background:rgba(39,174,96,0.15)}
+        .option input[type="radio"]{width:18px;height:18px;accent-color:var(--success);cursor:pointer}
+        .opt-label{font-weight:700;color:var(--secondary);min-width:24px;font-size:0.9rem}
+        .opt-text{font-family:'JetBrains Mono',monospace;font-size:0.9rem}
+        .essay-textarea{width:100%;min-height:160px;background:var(--bg-input);border:2px solid var(--border);border-radius:12px;padding:1rem;font-family:'JetBrains Mono',monospace;font-size:0.9rem;color:var(--text-white);resize:vertical}
+        .essay-textarea:focus{outline:none;border-color:var(--secondary)}
+        .upload-zone{margin-top:1.25rem;background:var(--bg-input);border:2px dashed var(--border);border-radius:14px;padding:1.5rem;text-align:center}
+        .upload-zone h4{font-size:0.95rem;margin-bottom:0.5rem}
+        .upload-zone p{font-size:0.8rem;color:var(--text-muted);margin-bottom:0.75rem}
+        .upload-btn{display:inline-flex;align-items:center;gap:0.5rem;background:linear-gradient(135deg,var(--accent),#e67e22);color:white;padding:0.6rem 1.25rem;border-radius:8px;font-weight:600;cursor:pointer;border:none;font-size:0.9rem}
+        .file-list{display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:0.75rem;justify-content:center}
+        .file-item{display:flex;align-items:center;gap:0.5rem;background:var(--bg-card);border:1px solid var(--border);padding:0.4rem 0.75rem;border-radius:6px;font-size:0.8rem}
+        .file-item .remove-btn{background:var(--danger);color:white;border:none;width:20px;height:20px;border-radius:50%;cursor:pointer;font-size:0.75rem}
+        .question-nav-buttons{display:flex;justify-content:space-between;gap:1rem;margin-top:1.5rem}
+        .nav-prev,.nav-next{padding:0.75rem 1.75rem;border-radius:10px;font-weight:600;font-size:0.95rem;cursor:pointer;border:none}
+        .nav-prev{background:var(--bg-input);color:var(--text-white);border:2px solid var(--border)}
+        .nav-next{background:linear-gradient(135deg,var(--secondary),var(--primary));color:white}
+        .nav-prev:disabled,.nav-next:disabled{opacity:0.5;cursor:not-allowed}
+        .submit-section{background:var(--bg-card);border-radius:20px;padding:2rem;text-align:center;border:1px solid var(--border);margin-top:1.5rem}
+        .submit-btn{background:linear-gradient(135deg,var(--success),#1e8449);color:white;border:none;padding:1.1rem 2.5rem;border-radius:12px;font-size:1.1rem;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:0.75rem}
+        .submit-btn:disabled{background:var(--text-muted);cursor:not-allowed}
+        .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:10000;align-items:center;justify-content:center;padding:1rem;overflow-y:auto}
+        .modal-overlay.show{display:flex}
+        .modal-box{background:var(--bg-card);border-radius:24px;padding:2rem;max-width:600px;width:100%;text-align:center;border:1px solid var(--border);animation:modalPop 0.4s ease;margin:auto}
+        @keyframes modalPop{0%{opacity:0;transform:scale(0.9)}100%{opacity:1;transform:scale(1)}}
+        .result-badge{width:90px;height:90px;border-radius:50%;margin:0 auto 1.25rem;display:flex;align-items:center;justify-content:center;font-size:2.5rem}
+        .result-badge.excellent{background:linear-gradient(135deg,var(--success),#1e8449)}
+        .result-badge.good{background:linear-gradient(135deg,var(--warning),#d68910)}
+        .result-badge.improve{background:linear-gradient(135deg,var(--danger),#c0392b)}
+        .result-score{font-size:3.5rem;font-weight:800;background:linear-gradient(135deg,var(--text-white),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        .result-label{font-size:1rem;color:var(--text-gray);margin-bottom:1.25rem}
+        .result-stats{background:var(--bg-input);border-radius:12px;padding:1rem;margin-bottom:1.25rem;text-align:left}
+        .stat-row{display:flex;justify-content:space-between;padding:0.5rem 0;border-bottom:1px solid var(--border);font-size:0.9rem}
+        .stat-row:last-child{border-bottom:none}
+        .sheet-status{border-radius:10px;padding:1rem;margin-bottom:1rem;font-size:0.9rem}
+        .sheet-status.sending{background:rgba(226,185,59,0.1);border:1px solid var(--warning);color:var(--warning)}
+        .sheet-status.success{background:rgba(39,174,96,0.1);border:1px solid var(--success);color:var(--success)}
+        .sheet-status.error{background:rgba(235,87,87,0.1);border:1px solid var(--danger);color:var(--danger)}
+        .close-modal-btn{background:var(--primary);color:white;border:none;padding:0.875rem 2rem;border-radius:10px;font-weight:600;cursor:pointer}
+        .legal-footer{background:var(--primary-dark);padding:1.25rem;margin-top:2rem;border-top:3px solid var(--secondary)}
+        .legal-content{max-width:950px;margin:0 auto}
+        .legal-content h4{font-size:0.85rem;color:var(--secondary);margin-bottom:0.5rem}
+        .legal-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:0.5rem}
+        .legal-item{background:rgba(255,255,255,0.05);padding:0.6rem;border-radius:6px;border-left:3px solid var(--secondary)}
+        .legal-item strong{color:var(--accent);font-size:0.75rem;display:block;margin-bottom:0.15rem}
+        .legal-item p{font-size:0.7rem;color:var(--text-gray)}
+        .loading-spinner{display:inline-block;width:18px;height:18px;border:3px solid rgba(255,255,255,0.3);border-radius:50%;border-top-color:currentColor;animation:spin 1s ease-in-out infinite;vertical-align:middle;margin-right:8px}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        @media(max-width:768px){.header-content{flex-direction:column;text-align:center}.header-left,.header-right{flex-direction:column}.question-nav-buttons{flex-direction:column}.modal-box{padding:1.5rem}}
+    </style>
+</head>
+<body>
+    <div class="violation-banner" id="violationBanner">⚠️ PERINGATAN: Pelanggaran terdeteksi!</div>
+    <div class="cheat-warning-overlay" id="cheatWarning">
+        <div class="warning-icon">🚨</div>
+        <h2>PELANGGARAN TERDETEKSI!</h2>
+        <p>Anda telah melakukan pelanggaran ujian:</p>
+        <p id="violationType">Keluar dari halaman ujian</p>
+        <div class="violation-count"><span id="currentViolations">1</span> / 5</div>
+        <p>Jika mencapai 5 pelanggaran, ujian otomatis dikumpulkan!</p>
+        <button class="continue-btn" onclick="dismissWarning()">Lanjutkan Ujian</button>
+    </div>
+
+    <div class="login-screen" id="loginScreen">
+        <div class="login-box">
+            <div class="login-header">
+                <div class="login-logo">SMKN 1<br>CIBATU</div>
+                <h1>Asesmen Sumatif Akhir Semester</h1>
+                <p>Matematika Kelas XI</p>
+            </div>
+            <form id="loginForm">
+                <div class="form-group"><label>Nama Lengkap *</label><input type="text" id="inputNama" required placeholder="Masukkan nama lengkap"></div>
+                <div class="form-group"><label>Kelas *</label>
+                    <select id="inputKelas" required>
+                        <option value="">— Pilih Kelas —</option>
+                        <option value="XI TP 3">XI TP 3</option>
+                        <option value="XI TP 4">XI TP 4</option>
+                    </select>
+                </div>
+                <div class="rules-box">
+                    <h3>🔒 Peraturan Ujian Online (Anti-Cheat)</h3>
+                    <ul>
+                        <li>Dilarang keluar dari halaman ujian (alt+tab, minimize)</li>
+                        <li>Dilarang membuka tab/jendela baru di browser</li>
+                        <li>Dilarang menggunakan klik kanan (copy/paste)</li>
+                        <li>Dilarang menekan tombol keyboard terlarang</li>
+                        <li>Maksimal 5 pelanggaran - ujian otomatis dikumpulkan!</li>
+                        <li>Hasil & rekap pelanggaran otomatis tercatat di Google Sheet</li>
+                    </ul>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="agreeRules" required>
+                    <label for="agreeRules">Saya memahami dan menyetujui semua peraturan ujian serta siap mengerjakan dengan jujur.</label>
+                </div>
+                <button type="submit" class="start-btn" id="startBtn" disabled>🚀 Mulai Ujian</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="exam-screen" id="examScreen">
+        <header class="header">
+            <div class="header-content">
+                <div class="header-left">
+                    <div class="header-logo">SMK</div>
+                    <div class="header-info"><h1>Asesmen Sumatif Matematika XI</h1><p id="studentInfo">Nama - Kelas</p></div>
+                </div>
+                <div class="header-right">
+                    <div class="violation-counter">⚠️ Pelanggaran: <strong id="violationCount">0</strong>/5</div>
+                    <div class="timer-box">⏱️ <span id="timerDisplay">90:00</span></div>
+                </div>
+            </div>
+        </header>
+        <main class="container">
+            <div class="question-nav"><h3>📋 Navigasi Soal</h3><div class="nav-buttons" id="navButtons"></div></div>
+            <div id="questionsContainer"></div>
+            <div class="submit-section" id="submitSection" style="display:none;">
+                <h3 style="margin-bottom:1rem;">Anda telah sampai di akhir soal</h3>
+                <p style="color:var(--text-gray);margin-bottom:1.5rem;">Pastikan semua jawaban telah terisi</p>
+                <button class="submit-btn" id="submitBtn" onclick="submitExam()">✅ Kumpulkan Jawaban</button>
+            </div>
+        </main>
+        <footer class="legal-footer">
+            <div class="legal-content" style="text-align:center;">
+                <p style="font-size:0.9rem;color:var(--text-gray);">©SMKN 1 Cibatu Purwakarta</p>
+            </div>
+        </footer>
+    </div>
+
+    <div class="modal-overlay" id="resultModal">
+        <div class="modal-box">
+            <div class="result-badge excellent" id="resultBadge">🎉</div>
+            <div class="result-score" id="resultScore">85</div>
+            <div class="result-label">Nilai Asesmen Anda</div>
+            <div class="sheet-status sending" id="sheetStatus"><span class="loading-spinner"></span>Menyimpan hasil ke Google Sheet...</div>
+            <div class="result-stats">
+                <div class="stat-row"><span>Nama</span><span id="resultName">-</span></div>
+                <div class="stat-row"><span>Kelas</span><span id="resultClass">-</span></div>
+                <div class="stat-row"><span>Pilihan Ganda Benar</span><span id="pgResult">12/15</span></div>
+                <div class="stat-row"><span>Skor PG (75 maks)</span><span id="pgScore">60</span></div>
+                <div class="stat-row"><span>Isian Singkat</span><span id="essayResult">-</span></div>
+                <div class="stat-row"><span>Skor Isian (25 maks)</span><span id="essayScore">0</span></div>
+                <div class="stat-row"><span>Waktu Pengerjaan</span><span id="timeResult">-</span></div>
+                <div class="stat-row" style="color:var(--danger)"><span>Jumlah Pelanggaran</span><span id="violationResult">0</span></div>
+            </div>
+            <div id="violationDetails" style="display:none;text-align:left;background:rgba(235,87,87,0.1);border:1px solid var(--danger);border-radius:10px;padding:1rem;margin-bottom:1rem;">
+                <h4 style="color:var(--danger);margin-bottom:0.5rem;font-size:0.9rem;">📋 Detail Pelanggaran:</h4>
+                <div id="violationList" style="font-size:0.8rem;color:var(--text-gray);"></div>
+            </div>
+            <button class="close-modal-btn" onclick="closeModal()">Tutup</button>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // KONFIGURASI GOOGLE SHEET
+        // ==========================================
+        // GANTI URL INI DENGAN URL WEB APP GOOGLE APPS SCRIPT ANDA
+        const GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/AKfycbzdiGxwdRR4tsnhF27yUz-8LKoAXSjq0YZ-NPv6TQx3EtdJnjc0THKLTldN7AFbZL_D_Q/exec';
+        
+        // ==========================================
+        // DATA SOAL
+        // ==========================================
+        const questions = [
+            {no:1,type:'pg',difficulty:'easy',text:'Diketahui fungsi <span class="math">f(x) = 2x + 5</span> dan <span class="math">g(x) = x − 3</span>. Hasil dari <span class="math">(f + g)(x)</span> adalah ...',options:['3x + 2','3x − 2','x + 8','2x + 2','x + 2'],answer:'A'},
+            {no:2,type:'pg',difficulty:'easy',text:'Jika <span class="math">f(x) = x² + 2</span> dan <span class="math">g(x) = 3x</span>, maka nilai <span class="math">(f − g)(2)</span> adalah ...',options:['0','2','4','6','8'],answer:'A'},
+            {no:3,type:'pg',difficulty:'easy',text:'Diketahui <span class="math">f(x) = 4x</span> dan <span class="math">g(x) = x + 1</span>. Rumus <span class="math">(f × g)(x)</span> adalah ...',options:['4x² + 4x','4x² + x','4x + 4','4x² − 4x','x² + 4x'],answer:'A'},
+            {no:4,type:'pg',difficulty:'easy',text:'Jika <span class="math">f(x) = x + 7</span>, maka <span class="math">f⁻¹(x)</span> adalah ...',options:['x + 7','x − 7','7 − x','−x − 7','7x'],answer:'B'},
+            {no:5,type:'pg',difficulty:'easy',text:'Diketahui <span class="math">f(x) = 3x − 1</span>. Hasil <span class="math">(f ∘ f)(x)</span> adalah ...',options:['9x − 4','9x − 3','9x − 1','6x − 2','6x − 1'],answer:'A'},
+            {no:6,type:'pg',difficulty:'easy',text:'Jika <span class="math">f(x) = 5x + 10</span>, nilai <span class="math">f⁻¹(25)</span> adalah ...',options:['1','2','3','5','7'],answer:'C'},
+            {no:7,type:'pg',difficulty:'medium',text:'Diketahui <span class="math">f(x) = x² − 3x</span> dan <span class="math">g(x) = x + 2</span>. Rumus <span class="math">(f ∘ g)(x)</span> adalah ...',options:['x² + x − 2','x² − x − 2','x² + x + 2','x² − x + 2','x² + 2x − 2'],answer:'B'},
+            {no:8,type:'pg',difficulty:'medium',text:'Jika <span class="math">f(x) = (3x − 2)/(x + 1)</span>, <span class="math">x ≠ −1</span>, maka <span class="math">f⁻¹(x)</span> adalah ...',options:['(x + 2)/(3 − x)','(x − 2)/(3 + x)','(−x − 2)/(x − 3)','(x + 1)/(3x − 2)','(2 − x)/(x + 3)'],answer:'C'},
+            {no:9,type:'pg',difficulty:'medium',text:'Diketahui <span class="math">(f ∘ g)(x) = 6x² + 6x + 1</span> dan <span class="math">g(x) = 3x + 1</span>. Rumus <span class="math">f(x)</span> adalah ...',options:['2x² − x','2x² + x','x² + 2x','x² − 2x','2x² − 2x'],answer:'A'},
+            {no:10,type:'pg',difficulty:'medium',text:'Jika <span class="math">f(x) = 2x − 3</span> dan <span class="math">g(x) = x² + 1</span>, nilai <span class="math">(g ∘ f)(−1)</span> adalah ...',options:['22','24','26','28','30'],answer:'C'},
+            {no:11,type:'pg',difficulty:'medium',text:'Diketahui <span class="math">f(x) = x/(x − 3)</span>, <span class="math">x ≠ 3</span>. Nilai <span class="math">(f ∘ f⁻¹)(10)</span> adalah ...',options:['3','5','7','10','13'],answer:'D'},
+            {no:12,type:'pg',difficulty:'medium',text:'Jika <span class="math">f(x) = 2x + 5</span> dan <span class="math">g(x) = x − 1</span>, hasil <span class="math">(f/g)(x)</span> untuk <span class="math">x ≠ 1</span> adalah ...',options:['(2x + 5)/(x − 1)','(x − 1)/(2x + 5)','(2x − 5)/(x + 1)','2x² + 3x − 5','3x + 4'],answer:'A'},
+            {no:13,type:'pg',difficulty:'hard',text:'Diketahui <span class="math">f(x) = (ax + b)/(x + c)</span> dengan <span class="math">f(1) = 2</span>, <span class="math">f(2) = 3</span>, dan <span class="math">f⁻¹(x) = f(x)</span>. Nilai <span class="math">f(4)</span> adalah ...',options:['4','5','6','7','8'],answer:'B'},
+            {no:14,type:'pg',difficulty:'hard',text:'Jika <span class="math">f(x) = 3x + 2</span> dan <span class="math">g(x) = x² − 2x + 1</span>, dan <span class="math">(f ∘ g)(a) = (g ∘ f)(a)</span>, jumlah semua nilai <span class="math">a</span> adalah ...',options:['−2','−1','0','1','2'],answer:'E'},
+            {no:15,type:'pg',difficulty:'hard',text:'Fungsi <span class="math">f(x) = (2x + 1)/(x − 2)</span>, <span class="math">x ≠ 2</span>. Jika <span class="math">f⁻¹(k) = k</span>, nilai <span class="math">k² − 2k + 1</span> adalah ...',options:['0','1','2','4','8'],answer:'D'},
+            {no:16,type:'essay',difficulty:'hard',text:'Sebuah toko elektronik di Purwakarta menetapkan harga jual dengan fungsi <span class="math">f(x) = 1,2x + 50.000</span> rupiah. Untuk member, diskon dihitung dengan <span class="math">g(x) = 0,95x</span>.<br><br><strong>Pertanyaan:</strong><br>a) Tentukan rumus <span class="math">(g ∘ f)(x)</span>!<br>b) Harga member jika harga beli Rp2.000.000?<br>c) Harga beli jika member bayar Rp2.375.000? (gunakan invers)'}
+        ];
+
+        // GLOBAL VARIABLES
+        let currentQuestion=0,answers={},uploadedFiles=[],violations=0,maxViolations=5,timeRemaining=90*60,startTime,timerInterval,examStarted=false,violationLog=[],studentData={};
+
+        // ANTI-CHEAT
+        document.addEventListener('contextmenu',e=>{if(examStarted){e.preventDefault();recordViolation('Klik kanan terdeteksi');}});
+        document.addEventListener('keydown',e=>{
+            if(!examStarted)return;
+            if(e.key==='F12'||(e.ctrlKey&&e.shiftKey&&['I','J','C'].includes(e.key.toUpperCase()))||(e.ctrlKey&&['u','U','s','S','p','P'].includes(e.key))){e.preventDefault();recordViolation('Shortcut keyboard terlarang');return false;}
+            if(e.ctrlKey&&['c','C','v','V'].includes(e.key)&&e.target.tagName!=='TEXTAREA'&&e.target.tagName!=='INPUT'){e.preventDefault();recordViolation('Copy/paste terdeteksi');return false;}
+            if(e.key==='PrintScreen'){e.preventDefault();recordViolation('Screenshot terdeteksi');return false;}
+        });
+        document.addEventListener('visibilitychange',()=>{if(examStarted&&document.hidden)recordViolation('Keluar dari tab/window');});
+        window.addEventListener('blur',()=>{if(examStarted)recordViolation('Keluar dari jendela browser');});
+        window.addEventListener('beforeunload',e=>{if(examStarted){e.preventDefault();e.returnValue='Yakin ingin meninggalkan ujian?';return e.returnValue;}});
+
+        function recordViolation(type){
+            violations++;
+            const now=new Date();
+            violationLog.push({time:now.toLocaleTimeString('id-ID'),type,question:currentQuestion+1});
+            document.getElementById('violationCount').textContent=violations;
+            document.getElementById('currentViolations').textContent=violations;
+            document.getElementById('violationType').textContent=type;
+            document.getElementById('cheatWarning').classList.add('show');
+            document.getElementById('violationBanner').classList.add('show');
+            if(violations>=maxViolations){alert('⚠️ Batas pelanggaran tercapai! Ujian dikumpulkan otomatis!');submitExam();}
+        }
+        function dismissWarning(){document.getElementById('cheatWarning').classList.remove('show');setTimeout(()=>document.getElementById('violationBanner').classList.remove('show'),3000);}
+
+        // LOGIN
+        document.getElementById('agreeRules').addEventListener('change',function(){document.getElementById('startBtn').disabled=!this.checked;});
+        document.getElementById('loginForm').addEventListener('submit',function(e){
+            e.preventDefault();
+            studentData={nama:document.getElementById('inputNama').value,kelas:document.getElementById('inputKelas').value};
+            document.getElementById('studentInfo').textContent=`${studentData.nama} - ${studentData.kelas}`;
+            document.getElementById('loginScreen').style.display='none';
+            document.getElementById('examScreen').classList.add('active');
+            startExam();
+        });
+
+        function startExam(){
+            examStarted=true;startTime=new Date();
+            generateQuestions();generateNavButtons();showQuestion(0);
+            timerInterval=setInterval(updateTimer,1000);
+            if(document.documentElement.requestFullscreen)document.documentElement.requestFullscreen().catch(()=>{});
+        }
+
+        function generateQuestions(){
+            const container=document.getElementById('questionsContainer');container.innerHTML='';
+            questions.forEach((q,i)=>{
+                const card=document.createElement('div');card.className=`question-card ${i===0?'active':''}`;card.id=`question-${i}`;
+                const diffClass=q.difficulty==='easy'?'diff-easy':q.difficulty==='medium'?'diff-medium':'diff-hard';
+                const diffText=q.difficulty==='easy'?'Mudah':q.difficulty==='medium'?'Sedang':'Sukar';
+                let html=`<div class="question-header"><div class="q-number">${q.no}</div><div class="q-meta"><p class="q-text">${q.text}</p><span class="difficulty ${diffClass}">${diffText}</span></div></div>`;
+                if(q.type==='pg'){
+                    html+='<div class="options">';
+                    ['A','B','C','D','E'].forEach((l,j)=>{html+=`<label class="option" onclick="selectOption(${i},'${l}')"><input type="radio" name="q${i}" value="${l}"><span class="opt-label">${l}.</span><span class="opt-text">${q.options[j]}</span></label>`;});
+                    html+='</div>';
+                }else{
+                    html+=`<div style="margin-top:1rem;"><label style="color:var(--text-gray);font-weight:600;margin-bottom:0.75rem;display:block;">Tuliskan jawaban lengkap:</label><textarea class="essay-textarea" id="essay-${i}" placeholder="Jawaban Anda..." oninput="saveEssayAnswer(${i})"></textarea></div>`;
+                    html+=`<div class="upload-zone"><h4>📤 Upload Lembar Jawaban (Opsional)</h4><p>Format: PNG, JPEG, JPG, DOC, DOCX, PDF (Maks. 5MB)</p><label class="upload-btn">📎 Pilih File<input type="file" style="display:none" id="fileInput" multiple accept=".png,.jpeg,.jpg,.doc,.docx,.pdf" onchange="handleFileUpload(event)"></label><div class="file-list" id="fileList"></div></div>`;
+                }
+                html+=`<div class="question-nav-buttons"><button class="nav-prev" onclick="prevQuestion()" ${i===0?'disabled':''}>← Sebelumnya</button><button class="nav-next" onclick="nextQuestion()">${i===questions.length-1?'Selesai →':'Selanjutnya →'}</button></div>`;
+                card.innerHTML=html;container.appendChild(card);
+            });
+        }
+
+        function generateNavButtons(){
+            const container=document.getElementById('navButtons');container.innerHTML='';
+            questions.forEach((q,i)=>{const btn=document.createElement('button');btn.className=`nav-btn ${i===0?'active':''}`;btn.textContent=q.no;btn.onclick=()=>showQuestion(i);btn.id=`nav-btn-${i}`;container.appendChild(btn);});
+        }
+
+        function showQuestion(i){
+            document.querySelectorAll('.question-card').forEach(c=>c.classList.remove('active'));
+            document.getElementById(`question-${i}`).classList.add('active');
+            document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+            document.getElementById(`nav-btn-${i}`).classList.add('active');
+            currentQuestion=i;
+            document.getElementById('submitSection').style.display=i===questions.length-1?'block':'none';
+            window.scrollTo({top:0,behavior:'smooth'});
+        }
+        function prevQuestion(){if(currentQuestion>0)showQuestion(currentQuestion-1);}
+        function nextQuestion(){if(currentQuestion<questions.length-1)showQuestion(currentQuestion+1);}
+
+        function selectOption(qi,v){
+            answers[qi]=v;
+            document.querySelectorAll(`#question-${qi} .option`).forEach(o=>o.classList.remove('selected'));
+            event.currentTarget.classList.add('selected');
+            document.getElementById(`nav-btn-${qi}`).classList.add('answered');
+        }
+
+        function saveEssayAnswer(i){
+            const t=document.getElementById(`essay-${i}`);answers[i]=t.value;
+            if(t.value.trim().length>0)document.getElementById(`nav-btn-${i}`).classList.add('answered');
+            else document.getElementById(`nav-btn-${i}`).classList.remove('answered');
+        }
+
+        function handleFileUpload(e){Array.from(e.target.files).forEach(f=>{if(f.size>5*1024*1024){alert(`File "${f.name}" terlalu besar!`);return;}uploadedFiles.push(f);});renderFileList();}
+        function renderFileList(){const c=document.getElementById('fileList');c.innerHTML=uploadedFiles.map((f,i)=>`<div class="file-item"><span>${f.type.includes('image')?'🖼️':f.type.includes('pdf')?'📕':'📄'}</span><span>${f.name}</span><button class="remove-btn" onclick="removeFile(${i})">×</button></div>`).join('');}
+        function removeFile(i){uploadedFiles.splice(i,1);renderFileList();}
+
+        function updateTimer(){
+            const m=Math.floor(timeRemaining/60),s=timeRemaining%60;
+            document.getElementById('timerDisplay').textContent=`${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+            if(timeRemaining<=0){clearInterval(timerInterval);alert('⏰ Waktu habis!');submitExam();}
+            timeRemaining--;
+        }
+
+        function submitExam(){
+            clearInterval(timerInterval);examStarted=false;
+            document.getElementById('submitBtn').disabled=true;
+            document.getElementById('submitBtn').innerHTML='<span class="loading-spinner"></span> Memproses...';
+            
+            // Calculate
+            let correct=0;
+            let answersDetail = [];
+            questions.forEach((q,i)=>{
+                if(q.type==='pg'){
+                    const isCorrect = answers[i]===q.answer;
+                    if(isCorrect) correct++;
+                    answersDetail.push(answers[i]||'-');
+                }
+            });
+            const essayIdx=questions.length-1;
+            const essayAnswer = answers[essayIdx]||'';
+            const hasEssay=essayAnswer.trim().length>0;
+            const pgScore=correct*5,essayScore=hasEssay?25:0,total=pgScore+essayScore;
+            const endTime=new Date(),timeUsed=Math.floor((endTime-startTime)/60000);
+            
+            // Build violation detail string
+            const violationDetail = violationLog.map((v,i)=>`${i+1}.[${v.time}] ${v.type} (Soal ${v.question})`).join(' | ');
+            
+            // Data untuk Google Sheet
+            const sheetData = {
+                timestamp: endTime.toLocaleString('id-ID'),
+                nama: studentData.nama,
+                kelas: studentData.kelas,
+                // Jawaban per soal
+                jawaban1: answersDetail[0]||'-',
+                jawaban2: answersDetail[1]||'-',
+                jawaban3: answersDetail[2]||'-',
+                jawaban4: answersDetail[3]||'-',
+                jawaban5: answersDetail[4]||'-',
+                jawaban6: answersDetail[5]||'-',
+                jawaban7: answersDetail[6]||'-',
+                jawaban8: answersDetail[7]||'-',
+                jawaban9: answersDetail[8]||'-',
+                jawaban10: answersDetail[9]||'-',
+                jawaban11: answersDetail[10]||'-',
+                jawaban12: answersDetail[11]||'-',
+                jawaban13: answersDetail[12]||'-',
+                jawaban14: answersDetail[13]||'-',
+                jawaban15: answersDetail[14]||'-',
+                jawabanIsian: essayAnswer.substring(0,500), // Batasi 500 karakter
+                // Skor
+                pgBenar: correct,
+                skorPG: pgScore,
+                skorIsian: essayScore,
+                nilaiTotal: total,
+                // Waktu
+                waktuMulai: startTime.toLocaleString('id-ID'),
+                waktuSelesai: endTime.toLocaleString('id-ID'),
+                durasiMenit: timeUsed,
+                // Pelanggaran
+                jumlahPelanggaran: violations,
+                detailPelanggaran: violationDetail || 'Tidak ada pelanggaran',
+                // Status
+                status: violations >= maxViolations ? 'AUTO-SUBMIT (Pelanggaran)' : 'Selesai Normal'
+            };
+            
+            // Update UI
+            document.getElementById('resultScore').textContent=total;
+            document.getElementById('resultName').textContent=studentData.nama;
+            document.getElementById('resultClass').textContent=studentData.kelas;
+            document.getElementById('pgResult').textContent=`${correct}/15`;
+            document.getElementById('pgScore').textContent=pgScore;
+            document.getElementById('essayResult').textContent=hasEssay?'Sudah Dijawab ✓':'Belum Dijawab';
+            document.getElementById('essayScore').textContent=essayScore;
+            document.getElementById('timeResult').textContent=`${timeUsed} menit`;
+            document.getElementById('violationResult').textContent=violations;
+            
+            const badge=document.getElementById('resultBadge');
+            if(total>=80){badge.textContent='🎉';badge.className='result-badge excellent';}
+            else if(total>=60){badge.textContent='👍';badge.className='result-badge good';}
+            else{badge.textContent='💪';badge.className='result-badge improve';}
+            
+            // Show violation details
+            if(violations>0){
+                document.getElementById('violationDetails').style.display='block';
+                document.getElementById('violationList').innerHTML=violationLog.map((v,i)=>`<div>${i+1}. [${v.time}] ${v.type} (Soal ${v.question})</div>`).join('');
+            }
+            
+            if(document.exitFullscreen)document.exitFullscreen().catch(()=>{});
+            document.getElementById('resultModal').classList.add('show');
+            
+            // Send to Google Sheet
+            sendToGoogleSheet(sheetData);
+        }
+
+        async function sendToGoogleSheet(data){
+            const sheetStatus = document.getElementById('sheetStatus');
+            
+            try {
+                // Kirim ke Google Apps Script Web App
+                const response = await fetch(GOOGLE_SHEET_URL, {
+                    method: 'POST',
+                    mode: 'no-cors', // Penting untuk menghindari CORS
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                // Karena mode no-cors, kita tidak bisa baca response
+                // Tapi data tetap terkirim
+                sheetStatus.className = 'sheet-status success';
+                sheetStatus.innerHTML = '✅ Hasil berhasil disimpan ke Google Sheet!';
+                
+                // Simpan juga ke localStorage sebagai backup
+                const savedResults = JSON.parse(localStorage.getItem('examResults')||'[]');
+                savedResults.push({...data, sentToSheet: true, sentAt: new Date().toISOString()});
+                localStorage.setItem('examResults', JSON.stringify(savedResults));
+                
+            } catch(err) {
+                console.error('Error sending to sheet:', err);
+                sheetStatus.className = 'sheet-status error';
+                sheetStatus.innerHTML = '⚠️ Gagal mengirim ke Google Sheet. Hasil tersimpan lokal.';
+                
+                // Simpan ke localStorage sebagai backup
+                const savedResults = JSON.parse(localStorage.getItem('examResults')||'[]');
+                savedResults.push({...data, sentToSheet: false, error: err.message});
+                localStorage.setItem('examResults', JSON.stringify(savedResults));
+            }
+            
+            // Log ke console
+            console.log('=== DATA TERKIRIM KE GOOGLE SHEET ===');
+            console.log(data);
+        }
+
+        function closeModal(){document.getElementById('resultModal').classList.remove('show');}
+    </script>
+</body>
+</html>
